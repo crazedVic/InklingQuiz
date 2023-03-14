@@ -11,10 +11,7 @@ VAR wrong_guesses = 0
 	~ current_score = 5 - wrong_guesses - 1
 }
 ~ total_score = total_score + current_score
-Correct! #shout #right
-You have earned {current_score} points. #right
-You currently have {total_score} points\.#right
-blank #blank
+Correct! You have earned {current_score} points and you currently have {total_score} points\.#right  #teacher
 ~ current_score = 0
 ~ wrong_guesses = 0
 -> DONE
@@ -22,15 +19,14 @@ blank #blank
 === wrong_guess ===
 ~ wrong_guesses ++
 
-You guessed wrong.  Try again! #wrong
-blank #blank
+You guessed wrong.  Try again! #wrong #teacher
 ->->
 
 === Quiz_Begin ===
 
 = Q1 
-1. In what month and year did our journey begin? #question
-* July 2021
+1. In what month and year did our journey begin? #question  #teacher
+* July 2021 
     -> wrong_guess ->
     -> Q1
 * June 2022
@@ -46,7 +42,7 @@ blank #blank
 = Q2
 
 
-2. What was the name of the mall where we waited for the ferry in the parking lot?
+2. What was the name of the mall where we waited for the ferry in the parking lot? #teacher
 * West Edmonton Mall
     -> wrong_guess ->
     -> Q2
@@ -61,7 +57,7 @@ blank #blank
     -> Q2
 
 = Q3
-3. In which town did we camp for the first week of our trip?
+3. In which town did we camp for the first week of our trip? #teacher
 * Victoria
     -> wrong_guess ->
     -> Q3
@@ -76,7 +72,7 @@ blank #blank
     -> Q3
     
 =Q4
-4. What typical Canadian thing did you see at the beach at the Surfside RV Park?
+4. What typical Canadian thing did you see at the beach at the Surfside RV Park? #teacher
 * Canadian Flag
      <- score_snippet
     -> Q5
@@ -91,7 +87,7 @@ blank #blank
     -> Q4
 
 = Q5
-5. What animals did we see on the roof in Coombs, BC?
+5. What animals did we see on the roof in Coombs, BC? #teacher
 * Deer
     -> wrong_guess ->
         -> Q5
@@ -106,7 +102,7 @@ blank #blank
         -> Q5
     
 = Q6
-6. What is the name of the attraction with the gigantic trees on Vancouver Island?
+6. What is the name of the attraction with the gigantic trees on Vancouver Island? #teacher
 * Botanical Garden
    -> wrong_guess ->
     -> Q6
@@ -121,7 +117,7 @@ blank #blank
     -> Q6
 
 = Q7
-7. In what town did we dip our feet first into the ocean?
+7. In what town did we dip our feet first into the ocean? #teacher
 * Ucluelet
    -> wrong_guess ->
     -> Q7
@@ -136,7 +132,7 @@ blank #blank
     -> Q7
 
 = Q8
-8. What was the name of the National Park located between Ucluelet and Tofino?
+8. What was the name of the National Park located between Ucluelet and Tofino? #teacher
 * Atlantic Coast National Park
    -> wrong_guess ->
     -> Q8
@@ -151,7 +147,7 @@ blank #blank
     -> Q9
     
 =Q9
-9.  In what family favorite restaurant did we meet up with Grandpa and Rosie in Vancouver?
+9.  In what family favorite restaurant did we meet up with Grandpa and Rosie in Vancouver? #teacher
 * McDonalds
    -> wrong_guess ->
     -> Q9
@@ -166,7 +162,7 @@ blank #blank
     -> Q9
     
 =Q10
-10.  What was the name of the lake where Dad almost broke Allie's back with his crazy motorboat skills?
+10.  What was the name of the lake where Dad almost broke Allie's back with his crazy motorboat skills? #teacher
 * Osoyoos Lake
     <- score_snippet
     -> Q11
@@ -181,7 +177,7 @@ blank #blank
     -> Q10
 
 = Q11
-11.  What was the theme of the museum with the old trains and rusted machinery in Rockland BC?
+11.  What was the theme of the museum with the old trains and rusted machinery in Rockland BC? #teacher
 * Mining
     <- score_snippet
     -> Q12
@@ -196,7 +192,7 @@ blank #blank
     -> Q11
 
 =Q12
-12. What was the name of the (only) city in Alberta where we spent out first night at a Walmart?
+12. What was the name of the (only) city in Alberta where we spent out first night at a Walmart? #teacher
 * Calgary
    -> wrong_guess ->
     -> Q12
@@ -211,7 +207,7 @@ blank #blank
     -> Q13
     
 =Q13 
-13. What is the name of the Natural Area in Alberta where we saw the giant red rocks cut in half lying around?
+13. What is the name of the Natural Area in Alberta where we saw the giant red rocks cut in half lying around? #teacher
 * Red Boulder Park
    -> wrong_guess ->
     -> Q13
@@ -226,7 +222,7 @@ blank #blank
     -> Q13
     
 = Q14
-14. In what city did we visit the RCMP Museum where you guys did the scavenger hunt?
+14. In what city did we visit the RCMP Museum where you guys did the scavenger hunt? #teacher
 * Calgary
    -> wrong_guess ->
     -> Q14
@@ -241,7 +237,7 @@ blank #blank
     -> Q15
     
 =Q15
-15.  Where did we camp on our only night in Saskatchewan?
+15.  Where did we camp on our only night in Saskatchewan? #teacher
 * In a forest
    -> wrong_guess ->
     -> Q15
@@ -256,7 +252,7 @@ blank #blank
     -> Q15
     
 =Q16
-16.  BONUS QUESTION: In Trail, BC, what animal did we see riding shotgun in the car next to us?
+16.  BONUS QUESTION: In Trail, BC, what animal did we see riding shotgun in the car next to us? #teacher
 * Elephant
    -> wrong_guess ->
     -> Q16
@@ -271,7 +267,7 @@ blank #blank
     -> QuizOver
 
 = QuizOver
-Thanks for taking this quiz!  You did better than I expected! #neutral #shout
+Thanks for taking this quiz!  You did better than I expected! #neutral #shout #teacher
 ->END
 
 

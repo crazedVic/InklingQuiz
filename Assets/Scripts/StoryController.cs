@@ -13,7 +13,10 @@ public class StoryController : MonoBehaviour {
 	public Story story;
 
 	[SerializeField]
-	private RectTransform canvas = null;
+	private RectTransform leftCanvas = null;
+
+	[SerializeField]
+	private RectTransform rightCanvas = null;
 
 	// UI Prefabs
 	[SerializeField]
@@ -25,8 +28,6 @@ public class StoryController : MonoBehaviour {
 
 
 	void Awake () {
-		// Remove the default message
-		RemoveChildren();
 		StartStory();
 	}
 
@@ -48,8 +49,8 @@ public class StoryController : MonoBehaviour {
 	// Continues over all the lines of text, then displays all the choices. If there are no choices, the story is finished!
 	void RefreshView () {
 		// Remove all the UI on screen
-		RemoveChildren ();
-		
+		RemoveChildrenLeft ();
+		RemoveChildrenRight();
 		// Read all the content until we can't continue any more
 		while (story.canContinue) {
 			// Continue gets the next line of the story
@@ -113,14 +114,14 @@ public class StoryController : MonoBehaviour {
 					break;
 			}
 		}
-		storyText.transform.SetParent (canvas.transform, false);
+		storyText.transform.SetParent (leftCanvas.transform, false);
 	}
 
 	// Creates a button showing the choice text
 	Button CreateChoiceView (string text) {
 		// Creates the button from a prefab
 		Button choice = Instantiate (buttonPrefab) as Button;
-		choice.transform.SetParent (canvas.transform, false);
+		choice.transform.SetParent (rightCanvas.transform, false);
 		
 		// Gets the text from the button prefab
 		Text choiceText = choice.GetComponentInChildren<Text> ();
@@ -134,10 +135,19 @@ public class StoryController : MonoBehaviour {
 	}
 
 	// Destroys all the children of this gameobject (all the UI)
-	void RemoveChildren () {
-		int childCount = canvas.transform.childCount;
+	void RemoveChildrenLeft () {
+		int childCount = leftCanvas.transform.childCount;
 		for (int i = childCount - 1; i >= 0; --i) {
-			GameObject.Destroy (canvas.transform.GetChild (i).gameObject);
+			GameObject.Destroy (leftCanvas.transform.GetChild (i).gameObject);
+		}
+	}
+
+	void RemoveChildrenRight()
+	{
+		int childCount = rightCanvas.transform.childCount;
+		for (int i = childCount - 1; i >= 0; --i)
+		{
+			GameObject.Destroy(rightCanvas.transform.GetChild(i).gameObject);
 		}
 	}
 
