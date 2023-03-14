@@ -108,7 +108,7 @@ public class StoryController : MonoBehaviour {
 				case "neutral":
 					storyText.color = Color.white;
 					break;
-				case "blank":
+				case "blank": // allows for blank lines
 					storyText.color = Color.clear;
 					break;
 			}
