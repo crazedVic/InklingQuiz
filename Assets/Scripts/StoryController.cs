@@ -18,6 +18,9 @@ public class StoryController : MonoBehaviour {
 	[SerializeField]
 	private RectTransform rightCanvas = null;
 
+	[SerializeField]
+	private RectTransform answerCanvas = null;
+
 	// UI Prefabs
 	[SerializeField]
 	private Text textPrefab = null;
@@ -26,13 +29,24 @@ public class StoryController : MonoBehaviour {
 	[SerializeField]
 	private Text Score;
 
+	// Label Mgmt
+	private string currentRole = "teacher"; // this will be updated anytime a role changes in the ink file
+								// we assume that unless there's a new role or mood, we use the last one we found.
+	private string currentMood = "neutral"; // same with mood, last one persists.
+
+	private string latestChoice = ""; // going to see if i can store last choice made
 
 	void Awake () {
 		StartStory();
 	}
 
-	// Creates a new Story object with the compiled story which we can then play!
-	void StartStory () {
+    private void Update()
+    {
+		answerCanvas.gameObject.SetActive(latestChoice != "");
+    }
+
+    // Creates a new Story object with the compiled story which we can then play!
+    void StartStory () {
 		story = new Story (inkJSONAsset.text);
         if(OnCreateStory != null) OnCreateStory(story);
 		story.ObserveVariable("total_score", (variableName, newValue) =>
@@ -42,6 +56,43 @@ public class StoryController : MonoBehaviour {
 				Score.text = $"{(int)newValue}";
 		});
 		RefreshView();
+	}
+
+	private void ParseTags(List<string> currentTags)
+	{
+		string oldMood = currentMood;
+		string oldRole = currentRole;
+		foreach (string tag in currentTags)
+		{
+			string[] splitTag = tag.Split(":");
+			if (splitTag.Length == 2)
+			{
+				string tagKey = splitTag[0].Trim();
+				string tagValue = splitTag[1].Trim();
+
+				switch (tagKey)
+				{
+					case "mood":
+						currentMood = tagValue;
+						break;
+					case "role":
+						currentRole = tagValue;
+						break;
+					default:
+						Debug.LogWarning($"unhandled Tag found:{tagKey}");
+						break;
+				}
+			}
+		}
+		if (currentMood != oldMood)
+        {
+			Debug.Log($"Mood changed from {oldMood} to {currentMood}");
+        }
+
+		if (currentRole != oldRole)
+		{
+			Debug.Log($"Mood changed from {oldRole} to {currentRole}");
+		}
 	}
 	
 	// This is the main function called every time the story changes. It does a few things:
@@ -59,12 +110,21 @@ public class StoryController : MonoBehaviour {
 			text = text.Trim();
 
 			List<string> tags = story.currentTags;
+			ParseTags(tags);
 			// Display the text on screen!
-			CreateContentView(text, tags);
+			CreateContentView(text);
 		}
 
 		// Display all the choices, if there are any!
-		if(story.currentChoices.Count > 0) {
+		if(latestChoice != "")
+        {
+			RemoveChildrenAnswer();
+			Text storyText = Instantiate(textPrefab) as Text;
+			storyText.text = latestChoice + "?";
+			storyText.transform.SetParent(answerCanvas.transform, false);
+		}
+
+        if (story.currentChoices.Count > 0) {
 			for (int i = 0; i < story.currentChoices.Count; i++) {
 				Choice choice = story.currentChoices [i];
 				Button button = CreateChoiceView (choice.text.Trim ());
@@ -85,43 +145,45 @@ public class StoryController : MonoBehaviour {
 
 	// When we click the choice button, tell the story to choose that choice!
 	void OnClickChoiceButton (Choice choice) {
+		latestChoice = choice.text;
 		story.ChooseChoiceIndex (choice.index);
 		RefreshView();
 	}
 
 	// Creates a textbox showing the the line of text
-	void CreateContentView (string text, List<string> tags) {
+	void CreateContentView (string text) {
+		if (text.Trim().Length == 0)
+			return;
 		Text storyText = Instantiate (textPrefab) as Text;
 		storyText.text = text;
-		for (int x = 0; x < tags.Count; x++)
+
+		switch (currentMood)
 		{
-			switch (tags[x])
-			{
-				case "shout":
-					storyText.fontSize = storyText.fontSize + 5;
-					break;
-				case "right":
-					storyText.color = Color.green;
-					break;
-				case "wrong":
-					storyText.color = Color.red;
-					break;
-				case "neutral":
-					storyText.color = Color.white;
-					break;
-				case "blank": // allows for blank lines
-					storyText.color = Color.clear;
-					break;
-			}
+			case "shout":
+				storyText.fontSize = storyText.fontSize + 5;
+				break;
+			case "right":
+				storyText.color = Color.green;
+				break;
+			case "wrong":
+				storyText.color = Color.red;
+				break;
+			case "neutral":
+				storyText.color = Color.white;
+				break;
+			case "blank": // allows for blank lines
+				storyText.color = Color.clear;
+				break;
+
 		}
-		storyText.transform.SetParent (leftCanvas.transform, false);
+		storyText.transform.SetParent (currentRole == "teacher" ? leftCanvas.transform : rightCanvas.transform, false);
 	}
 
 	// Creates a button showing the choice text
 	Button CreateChoiceView (string text) {
 		// Creates the button from a prefab
 		Button choice = Instantiate (buttonPrefab) as Button;
-		choice.transform.SetParent (rightCanvas.transform, false);
+		choice.transform.SetParent (currentRole == "teacher" ? leftCanvas.transform: rightCanvas.transform, false);
 		
 		// Gets the text from the button prefab
 		Text choiceText = choice.GetComponentInChildren<Text> ();
@@ -151,5 +213,13 @@ public class StoryController : MonoBehaviour {
 		}
 	}
 
+	void RemoveChildrenAnswer()
+	{
+		int childCount = answerCanvas.transform.childCount;
+		for (int i = childCount - 1; i >= 0; --i)
+		{
+			GameObject.Destroy(answerCanvas.transform.GetChild(i).gameObject);
+		}
+	}
 
 }
