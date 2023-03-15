@@ -1623,4 +1623,5 @@ MonoBehaviour:
   answerCanvas: {fileID: 424381551}
   textPrefab: {fileID: 11456674, guid: 1aab6ef84d87c416f8f0b3e1ef3d77d2, type: 3}
   buttonPrefab: {fileID: 6789921035648655236, guid: 55309a56d9cccca47a61fcafba607326, type: 3}
+  inputFieldPrefab: {fileID: 1357776975742626413, guid: c9a8ab300ff97c941a0b7d18f1e12657, type: 3}
   Score: {fileID: 1834081665}

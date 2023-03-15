@@ -27,6 +27,8 @@ public class StoryController : MonoBehaviour {
 	[SerializeField]
 	private Button buttonPrefab = null;
 	[SerializeField]
+	private InputField inputFieldPrefab = null;
+	[SerializeField]
 	private Text Score;
 
 	// Label Mgmt
@@ -36,10 +38,25 @@ public class StoryController : MonoBehaviour {
 
 	private string latestChoice = ""; // going to see if i can store last choice made
 
+	private string username = "";
+
 	void Awake () {
-		StartStory();
+		GetUserName();
+		
 	}
 
+	private void GetUserName()
+    {
+		// here add text to left canvas asking user their name
+		// then add input box to right canvas
+		// user name should be submitted on Enter
+		Text usernamePrompt = Instantiate(textPrefab) as Text;
+		usernamePrompt.text = "What is your name?";
+		usernamePrompt.transform.SetParent(leftCanvas.transform, false);
+		InputField inputField = Instantiate(inputFieldPrefab) as InputField;
+		inputField.onSubmit.AddListener(onSubmitName);
+		inputField.transform.SetParent(rightCanvas.transform, false);
+	}
     private void Update()
     {
 		answerCanvas.gameObject.SetActive(latestChoice != "");
@@ -55,7 +72,7 @@ public class StoryController : MonoBehaviour {
 			if(newValue!=null)
 				Score.text = $"{(int)newValue}";
 		});
-		RefreshView();
+		RefreshView(false);
 	}
 
 	private void ParseTags(List<string> currentTags)
@@ -98,10 +115,14 @@ public class StoryController : MonoBehaviour {
 	// This is the main function called every time the story changes. It does a few things:
 	// Destroys all the old content and choices.
 	// Continues over all the lines of text, then displays all the choices. If there are no choices, the story is finished!
-	void RefreshView () {
+	void RefreshView (bool clearScreen = true) {
 		// Remove all the UI on screen
-		RemoveChildrenLeft ();
-		RemoveChildrenRight();
+		if (clearScreen)
+        {
+			RemoveChildrenLeft();
+			RemoveChildrenRight();
+		}
+		
 		// Read all the content until we can't continue any more
 		while (story.canContinue) {
 			// Continue gets the next line of the story
@@ -220,6 +241,17 @@ public class StoryController : MonoBehaviour {
 		{
 			GameObject.Destroy(answerCanvas.transform.GetChild(i).gameObject);
 		}
+	}
+
+	public void onSubmitName(string value)
+    {
+		username = value;
+		RemoveChildrenLeft();
+		RemoveChildrenRight();
+		Text usernamePrompt = Instantiate(textPrefab) as Text;
+		usernamePrompt.text = $"Welcome to the quiz {username}!";
+		usernamePrompt.transform.SetParent(leftCanvas.transform, false);
+		StartStory();
 	}
 
 }
