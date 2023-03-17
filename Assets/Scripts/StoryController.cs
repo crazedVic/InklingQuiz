@@ -94,6 +94,7 @@ public class StoryController : MonoBehaviour {
 		username = "";
 		userscore = 0;
 		latestChoice = "";
+		Score.text = "0";
 		RemoveChildrenLeft();
 		RemoveChildrenRight();
 		RemoveChildrenAnswer();
@@ -186,7 +187,6 @@ public class StoryController : MonoBehaviour {
 			// wait till it comes back, then get high scores.
 			// then show option how did i do
 			apiController.PostScore(username, userscore);
-			apiController.getScores();
 			currentRole = "student";
 			Button button = CreateChoiceView("How did I do?");
 			button.onClick.AddListener(delegate {

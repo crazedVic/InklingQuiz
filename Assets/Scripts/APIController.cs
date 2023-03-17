@@ -30,33 +30,45 @@ public class APIController : MonoBehaviour
     public void getScores()
     {
         // need to implement using...
-        // need to implement using...
-        HttpWebRequest request = (HttpWebRequest) WebRequest.Create("https://leaderboards.simpleapi.dev/api/scores");
+        StartCoroutine(Get("https://leaderboards.simpleapi.dev/api/scores", "Bearer ksdhf;lsajdfjaldfjlkasjdflkja;ldfj;lajs;ldfjlasdjfl;"));
+/*        HttpWebRequest request = (HttpWebRequest) WebRequest.Create("https://leaderboards.simpleapi.dev/api/scores");
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        StreamReader reader = new StreamReader(response.GetResponseStream());
-        string json = reader.ReadToEnd();
-        RootObject rootObject = JsonUtility.FromJson<RootObject>("{\"scoreData\":" + json + "}");
-        scores = rootObject.scoreData;
-        // need to empty the children inside the scorePanel
-        foreach (Transform child in scorePanel)
-        {
-            Destroy(child.gameObject);
-        }
-        for (int x = 0; x < scores.Length; x++)
-        {
-            GameObject entry = Instantiate(entryPrefab, scorePanel);
-            entry.GetComponent<Entry>().playerName.text = scores[x].name;
-            entry.GetComponent<Entry>().playerScore.text = $"{scores[x].score}"; ;
-        }
+        StreamReader reader = new StreamReader(response.GetResponseStream());*/
 
     }
 
-    IEnumerator Post(string url, string bodyJsonString, string token)
+    IEnumerator Get(string url, string token = "")
+    {
+        // better memory mgmt with using
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            if (token != "") request.SetRequestHeader("Authorization", token);
+            yield return request.SendWebRequest();
+            Debug.Log("Status Code: " + request.responseCode);
+            string json = request.downloadHandler.text;
+            RootObject rootObject = JsonUtility.FromJson<RootObject>("{\"scoreData\":" + json + "}");
+            scores = rootObject.scoreData;
+            // need to empty the children inside the scorePanel
+            foreach (Transform child in scorePanel)
+            {
+                Destroy(child.gameObject);
+            }
+            for (int x = 0; x < scores.Length; x++)
+            {
+                GameObject entry = Instantiate(entryPrefab, scorePanel);
+                entry.GetComponent<Entry>().playerName.text = scores[x].name;
+                entry.GetComponent<Entry>().playerScore.text = $"{scores[x].score}"; ;
+            }
+        }
+    }
+
+    IEnumerator Post(string url,  string bodyJsonString = "", string token="")
     {
         // better memory mgmt with using
         using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
         {
-            //var request = new UnityWebRequest(url, "POST");
             byte[] bodyRaw = Encoding.UTF8.GetBytes(bodyJsonString);
             request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
@@ -64,9 +76,12 @@ public class APIController : MonoBehaviour
             request.SetRequestHeader("Authorization", token);
             yield return request.SendWebRequest();
             Debug.Log("Status Code: " + request.responseCode);
-
+            // after posting always get.
+            StartCoroutine(Get("https://leaderboards.simpleapi.dev/api/scores", "Bearer ksdhf;lsajdfjaldfjlkasjdflkja;ldfj;lajs;ldfjlasdjfl;"));
         }
     }
+
+    
 }
 
 [Serializable]
