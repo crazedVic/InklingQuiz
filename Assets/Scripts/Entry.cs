@@ -1,15 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
 
 public class Entry : MonoBehaviour
 {
-    [SerializeField] public TextMeshProUGUI playerScore;
-    [SerializeField] public TextMeshProUGUI playerName;
+    [SerializeField] public Text playerScore;
+    [SerializeField] public Text playerName;
 
-    private void Update()
-    {
-        
-    }
 }

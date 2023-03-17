@@ -20,9 +20,9 @@ public class APIController : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void PostScore()
+    public void PostScore(string username, int score)
     {
-        string json = JsonUtility.ToJson(new Score("Melissa", 114));
+        string json = JsonUtility.ToJson(new Score(username,score));
         string token = "Bearer ksdhf;lsajdfjaldfjlkasjdflkja;ldfj;lajs;ldfjlasdjfl;";
         Debug.Log(json);
         StartCoroutine(Post("https://leaderboards.simpleapi.dev/api/scores", json, token));

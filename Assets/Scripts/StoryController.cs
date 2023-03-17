@@ -42,10 +42,14 @@ public class StoryController : MonoBehaviour {
 	private string latestChoice = ""; // going to see if i can store last choice made
 
 	private string username = "";
+	private int userscore = 0;
+
+	private APIController apiController;
 
 	void Awake () {
 		GetUserName();
-		
+		highScorePanel.SetActive(false);
+		apiController = GetComponent<APIController>();
 	}
 
 	private void GetUserName()
@@ -73,11 +77,27 @@ public class StoryController : MonoBehaviour {
         if(OnCreateStory != null) OnCreateStory(story);
 		story.ObserveVariable("total_score", (variableName, newValue) =>
 		{
-			// Print the new value
-			if(newValue!=null)
+            // Print the new value
+            if (newValue != null)
+            {
 				Score.text = $"{(int)newValue}";
+				userscore = (int)newValue;
+            }
+				
 		});
 		RefreshView(false);
+	}
+
+	public void PlayAgain()
+    {
+		highScorePanel.SetActive(false);
+		username = "";
+		userscore = 0;
+		latestChoice = "";
+		RemoveChildrenLeft();
+		RemoveChildrenRight();
+		RemoveChildrenAnswer();
+		GetUserName();
 	}
 
 	private void ParseTags(List<string> currentTags)
@@ -162,6 +182,11 @@ public class StoryController : MonoBehaviour {
 		}
 		// If we've read all the content and there's no choices, the story is finished!
 		else {
+			// submit score
+			// wait till it comes back, then get high scores.
+			// then show option how did i do
+			apiController.PostScore(username, userscore);
+			apiController.getScores();
 			currentRole = "student";
 			Button button = CreateChoiceView("How did I do?");
 			button.onClick.AddListener(delegate {
@@ -174,6 +199,7 @@ public class StoryController : MonoBehaviour {
     {
 		highScorePanel.SetActive(true);
     }
+
 	// When we click the choice button, tell the story to choose that choice!
 	void OnClickChoiceButton (Choice choice) {
 		latestChoice = choice.text;
@@ -240,6 +266,9 @@ public class StoryController : MonoBehaviour {
 		int childCount = rightCanvas.transform.childCount;
 		for (int i = childCount - 1; i >= 0; --i)
 		{
+			Button btn;
+			rightCanvas.transform.GetChild(i).TryGetComponent<Button>(out btn);
+			if (btn) btn.onClick.RemoveAllListeners();
 			GameObject.Destroy(rightCanvas.transform.GetChild(i).gameObject);
 		}
 	}
