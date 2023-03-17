@@ -21,6 +21,9 @@ public class StoryController : MonoBehaviour {
 	[SerializeField]
 	private RectTransform answerCanvas = null;
 
+	[SerializeField]
+	private GameObject highScorePanel = null;
+
 	// UI Prefabs
 	[SerializeField]
 	private Text textPrefab = null;
@@ -60,7 +63,9 @@ public class StoryController : MonoBehaviour {
     private void Update()
     {
 		answerCanvas.gameObject.SetActive(latestChoice != "");
-    }
+		rightCanvas.gameObject.SetActive(rightCanvas.childCount > 0);
+		leftCanvas.gameObject.SetActive(leftCanvas.childCount > 0);
+	}
 
     // Creates a new Story object with the compiled story which we can then play!
     void StartStory () {
@@ -157,13 +162,18 @@ public class StoryController : MonoBehaviour {
 		}
 		// If we've read all the content and there's no choices, the story is finished!
 		else {
-			Button choice = CreateChoiceView("End of story.\nRestart?");
-			choice.onClick.AddListener(delegate{
-				StartStory();
+			currentRole = "student";
+			Button button = CreateChoiceView("How did I do?");
+			button.onClick.AddListener(delegate {
+				ShowScores();
 			});
 		}
 	}
 
+	void ShowScores()
+    {
+		highScorePanel.SetActive(true);
+    }
 	// When we click the choice button, tell the story to choose that choice!
 	void OnClickChoiceButton (Choice choice) {
 		latestChoice = choice.text;
@@ -181,7 +191,7 @@ public class StoryController : MonoBehaviour {
 		switch (currentMood)
 		{
 			case "shout":
-				storyText.fontSize = storyText.fontSize + 5;
+				storyText.fontSize = storyText.fontSize + 2;
 				break;
 			case "right":
 				storyText.color = Color.green;

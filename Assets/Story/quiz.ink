@@ -35,7 +35,7 @@ You guessed wrong.  Try again! #mood:wrong #role:teacher
     -> Q1
 * [June 2022]
     <- score_snippet
-    -> Q2
+    -> QuizOver
 * [July 2022]
     -> wrong_guess ->
     -> Q1
@@ -126,7 +126,7 @@ You guessed wrong.  Try again! #mood:wrong #role:teacher
     -> Q6
 * [Cathedral Grove]
     <- score_snippet
-    -> Q6
+    -> Q7
 
 = Q7
 #role:teacher
