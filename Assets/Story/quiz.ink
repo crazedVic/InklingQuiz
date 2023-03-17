@@ -35,7 +35,7 @@ You guessed wrong.  Try again! #mood:wrong #role:teacher
     -> Q1
 * [June 2022]
     <- score_snippet
-    -> QuizOver
+    -> Q2
 * [July 2022]
     -> wrong_guess ->
     -> Q1
